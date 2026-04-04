@@ -105,6 +105,24 @@ final class MovieQuizViewController: UIViewController {
         }
         isButtonsEnabled = true
     }
+    
+    private func show(quiz result: QuizResultsViewModel) {
+        let alert = UIAlertController(
+            title: result.title,
+            message: result.text,
+            preferredStyle: .alert)
+
+        let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
+            self.imageView.layer.borderWidth = 0
+            self.currentQuestionIndex = 0
+            self.correctAnswers = 0
+            self.isButtonsEnabled = true
+            self.show(quiz: self.convert(model: self.questions[self.currentQuestionIndex]))
+        }
+
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
 
     // MARK: - Models
 
@@ -124,23 +142,5 @@ final class MovieQuizViewController: UIViewController {
         let title: String
         let text: String
         let buttonText: String
-    }
-
-    private func show(quiz result: QuizResultsViewModel) {
-        let alert = UIAlertController(
-            title: result.title,
-            message: result.text,
-            preferredStyle: .alert)
-
-        let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
-            self.imageView.layer.borderWidth = 0
-            self.currentQuestionIndex = 0
-            self.correctAnswers = 0
-            self.isButtonsEnabled = true
-            self.show(quiz: self.convert(model: self.questions[self.currentQuestionIndex]))
-        }
-
-        alert.addAction(action)
-        present(alert, animated: true, completion: nil)
     }
 }
