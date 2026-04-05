@@ -1,11 +1,11 @@
 //
-//  AlertPresenterDelegate.swift
+//  ResultAlertPresenterDelegate.swift
 //  MovieQuiz
 //
 //  Created by Ekaterina on 05.04.2026.
 //
 
 
-protocol AlertPresenterDelegate: AnyObject {
+protocol ResultAlertPresenterDelegate: AnyObject {
     func didTapAlertButton()
 }

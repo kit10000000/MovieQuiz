@@ -1,13 +1,13 @@
 //
-//  AlertPresenter.swift
+//  ResultAlertPresenter.swift
 //  MovieQuiz
 //
 //  Created by Ekaterina on 05.04.2026.
 //
 import UIKit
 
-final class AlertPresenter {
-    weak var delegate: AlertPresenterDelegate?
+final class ResultAlertPresenter {
+    weak var delegate: ResultAlertPresenterDelegate?
 
     func show(in viewController: UIViewController, model: AlertModel) {
         let alert = UIAlertController(
