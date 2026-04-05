@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  {
+final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertPresenterDelegate {
 
     // MARK: - IBOutlets
 
@@ -18,6 +18,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
+    private var alertPresenter: AlertPresenter?
 
     // MARK: - Lifecycle
 
@@ -28,6 +29,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         questionFactory.delegate = self
         self.questionFactory = questionFactory
         self.questionFactory?.requestNextQuestion()
+        
+        let alertPresenter = AlertPresenter()
+        alertPresenter.delegate = self
+        self.alertPresenter = alertPresenter
     }
 
     // MARK: - IBActions
@@ -48,6 +53,27 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
             return
         }
         showAnswerResult(isCorrect: currentQuestion.correctAnswer)
+    }
+
+    // MARK: - QuestionFactoryDelegate
+
+    func didReceiveNextQuestion(question: QuizQuestion?) {
+        guard let question = question else {
+            return
+        }
+
+        currentQuestion = question
+        let viewModel = convert(model: question)
+
+        DispatchQueue.main.async { [weak self] in
+            self?.show(quiz: viewModel)
+        }
+    }
+
+    // MARK: - AlertPresenterDelegate
+
+    func didTapAlertButton() {
+        restartGame()
     }
 
     // MARK: - Private Methods
@@ -100,42 +126,25 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         } else {
             imageView.layer.borderWidth = 0
             currentQuestionIndex += 1
-            self.questionFactory?.requestNextQuestion()
+            questionFactory?.requestNextQuestion()
         }
         isButtonsEnabled = true
     }
-    
+
     private func show(quiz result: QuizResultsViewModel) {
-        let alert = UIAlertController(
+        let alertModel = AlertModel(
             title: result.title,
             message: result.text,
-            preferredStyle: .alert)
-
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
-            guard let self = self else { return }
-            self.imageView.layer.borderWidth = 0
-            self.currentQuestionIndex = 0
-            self.correctAnswers = 0
-            self.isButtonsEnabled = true
-            questionFactory?.requestNextQuestion()
-        }
-
-        alert.addAction(action)
-        present(alert, animated: true, completion: nil)
+            buttonText: result.buttonText
+        )
+        alertPresenter?.show(in: self, model: alertModel)
     }
-    
-    // MARK: - QuestionFactoryDelegate
 
-    func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question = question else {
-            return
-        }
-
-        currentQuestion = question
-        let viewModel = convert(model: question)
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.show(quiz: viewModel)
-        }
+    private func restartGame() {
+        imageView.layer.borderWidth = 0
+        currentQuestionIndex = 0
+        correctAnswers = 0
+        isButtonsEnabled = true
+        questionFactory?.requestNextQuestion()
     }
 }
