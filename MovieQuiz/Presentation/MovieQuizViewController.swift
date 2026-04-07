@@ -41,18 +41,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         guard isButtonsEnabled else { return }
         isButtonsEnabled = false
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
+        guard let currentQuestion else { return }
         showAnswerResult(isCorrect: !currentQuestion.correctAnswer)
     }
 
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         guard isButtonsEnabled else { return }
         isButtonsEnabled = false
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
+        guard let currentQuestion else { return }
         showAnswerResult(isCorrect: currentQuestion.correctAnswer)
     }
 
