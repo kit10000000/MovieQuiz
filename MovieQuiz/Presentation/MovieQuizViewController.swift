@@ -3,7 +3,6 @@ import UIKit
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
 
     // MARK: - IBOutlets
-
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var counterLabel: UILabel!
     @IBOutlet weak private var textLabel: UILabel!
@@ -12,7 +11,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet weak private var activityIndicator: UIActivityIndicatorView!
 
     // MARK: - Private Properties
-
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private var isButtonsEnabled = true
@@ -23,10 +21,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var statisticService: StatisticServiceProtocol = StatisticService()
 
     // MARK: - Lifecycle
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpUI()
+        
+        activityIndicator.hidesWhenStopped = true
         showLoadingIndicator()
 
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
@@ -34,7 +33,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
 
     // MARK: - IBActions
-
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         guard isButtonsEnabled else { return }
         isButtonsEnabled = false
@@ -50,12 +48,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
 
     // MARK: - QuestionFactoryDelegate
-
     func didReceiveNextQuestion(question: QuizQuestion?) {
         hideLoadingIndicator()
-        guard let question = question else {
-            return
-        }
+        guard let question else { return }
 
         currentQuestion = question
         let viewModel = convert(model: question)
@@ -75,7 +70,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
 
     // MARK: - Private Methods
-
     private func setUpUI() {
         imageView.layer.cornerRadius = 20
         imageView.layer.masksToBounds = true
@@ -87,7 +81,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
 
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         QuizStepViewModel(
-            image: UIImage(data: model.image) ?? UIImage(),
+            image: UIImage(data: model.imageData) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
@@ -157,15 +151,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         showLoadingIndicator()
         questionFactory?.requestNextQuestion()
     }
-    
+
     private func showLoadingIndicator() {
-        activityIndicator.isHidden = false
         activityIndicator.startAnimating()
         isButtonsEnabled = false
     }
 
     private func hideLoadingIndicator() {
-        activityIndicator.isHidden = true
         activityIndicator.stopAnimating()
         isButtonsEnabled = true
     }
