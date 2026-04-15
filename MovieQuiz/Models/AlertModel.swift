@@ -5,10 +5,9 @@
 //  Created by Ekaterina on 05.04.2026.
 //
 
-
 struct AlertModel {
-    var title: String
-    var message: String
-    var buttonText: String
-    var completion: () -> Void
+    let title: String
+    let message: String
+    let buttonText: String
+    let completion: () -> Void
 } 
