@@ -10,9 +10,6 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet weak private var noButton: UIButton!
     @IBOutlet weak private var activityIndicator: UIActivityIndicatorView!
 
-    // MARK: - Properties
-    var statisticService: StatisticServiceProtocol = StatisticService()
-
     // MARK: - Private Properties
     private var isButtonsEnabled = true
     private let alertPresenter = AlertPresenter()
@@ -47,18 +44,10 @@ final class MovieQuizViewController: UIViewController {
         imageView.image = UIImage(data: step.imageData) ?? UIImage()
     }
 
-    func showAnswerResult(isCorrect: Bool) {
-        if isCorrect {
-            presenter?.didAnswer(isCorrectAnswer: true)
-        }
-
+    func highlightImageBorder(isCorrectAnswer: Bool) {
+        imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
-        imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self else { return }
-            presenter?.showNextQuestionOrResults()
-        }
+        imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
     }
 
     func show(quiz result: QuizResultsViewModel) {
